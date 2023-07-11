@@ -9,3 +9,5 @@ Slides:
 https://github.com/yxeHu/intro-to-js-for-future-web-developers-UC2023/blob/main/Intro%20to%20JavaScript%20to%20Future%20Web%20Developers.pdf  
 
 Online Application (CodePen): https://codepen.io/emilyyixuanhu/pen/rNQGxgR
+
+To run the application, add your ArcGIS Developer API key. You sign up for ArcGIS Developer for free at https://developers.arcgis.com/sign-up/
