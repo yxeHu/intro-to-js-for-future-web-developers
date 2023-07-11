@@ -1,0 +1,103 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>02 - Click events</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.27/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.27/"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #sideBar {
+            height: 100%;
+            width: 30%;
+            float: right;
+            padding: 20px;
+            overflow: auto;
+            min-width: 240px;
+        }
+
+        #viewDiv {
+            height: 100%;
+            max-width: 70%;
+        }
+    </style>
+    <script>
+        require([
+            "esri/WebMap",
+            "esri/views/MapView",
+            "esri/widgets/Legend",
+            // // step 2 - add graphic
+            // "esri/Graphic",
+        ], function (
+            WebMap, MapView, Legend,
+            // // step 2 - add graphic
+            // Graphic
+        ) {
+            const webmap = new WebMap({
+                portalItem: {
+                    id: "aff566df19af462b9324a05fd98a1a27"
+                },
+            });
+
+            const mapview = new MapView({
+                container: "viewDiv",
+                map: webmap
+            });
+
+            let legend = new Legend({
+                view: mapview
+            });
+
+            mapview.ui.add(legend, "bottom-left");
+
+            // // step 1 - click events
+            // mapview.on("click", (event) => {
+            //     console.log("clicked!");
+            //     console.log(event);
+
+            //     // // step 3 - reset
+            //     // reset();
+
+            //     // // step 2 - add graphic
+            //     // const locationGraphic = new Graphic({
+            //     //     geometry: event.mapPoint,
+            //     //     symbol: {
+            //     //         type: "web-style",
+            //     //         name: "esri-pin-1",
+            //     //         styleName: "Esri2DPointSymbolsStyle"
+            //     //     }
+            //     // });
+            //     // mapview.graphics.add(locationGraphic, 0);
+            // });
+
+            // document.getElementById("info").addEventListener("click", (event) => {
+            //     alert("clicked!");
+            //     // // step 3 - reset
+            //     // reset();
+            // });
+
+            // // step 3 - reset
+            // function reset() {
+            //     mapview.graphics.removeAll();
+            // }
+        })
+    </script>
+</head>
+
+<body>
+    <div id="sideBar">
+        <h2>San Diego Walk Guide</h2>
+        <p id="info">Click somewhere in the map to query POIs within 5-min walking distance.</p>
+    </div>
+    <div id="viewDiv"></div>
+</body>
+
+</html>

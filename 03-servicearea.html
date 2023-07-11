@@ -1,0 +1,162 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>03 - Service area</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.27/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.27/"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #sideBar {
+            height: 100%;
+            width: 30%;
+            float: right;
+            padding: 20px;
+            overflow: auto;
+            min-width: 240px;
+        }
+
+        #viewDiv {
+            height: 100%;
+            max-width: 70%;
+        }
+    </style>
+    <script>
+        require([
+            "esri/WebMap",
+            "esri/views/MapView",
+            "esri/widgets/Legend",
+            "esri/Graphic",
+            // step 1 - location service
+            "esri/config",
+            "esri/rest/serviceArea",
+            "esri/rest/support/ServiceAreaParameters",
+            "esri/rest/support/FeatureSet",
+            // step 2 - display service area
+            "esri/layers/GraphicsLayer",
+            // step 3 - change to walk distance
+            "esri/rest/networkService",
+        ], function (
+            WebMap, MapView, Legend,
+            Graphic,
+            // // step 1 - location service
+            // esriConfig, serviceArea, ServiceAreaParams, FeatureSet,
+            // // step 2 - display service area
+            // GraphicsLayer,
+            // // step 3 - change to walk distance
+            // networkService,
+        ) {
+            // // step 1 - location service
+            // esriConfig.apiKey = "AAPKc364031112424dbe8892caf6a5cc86baP2O7tdWQsMzlOj0_gYA7Tn19tK3bLsfXTQyWQb-PAgTQZgI50tmuWEbvC4TwNi9Q";
+            // const serviceAreaUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World";
+
+            // // step 2 - display service area
+            // let bufferLayer;
+
+            const webmap = new WebMap({
+                portalItem: {
+                    id: "aff566df19af462b9324a05fd98a1a27"
+                },
+            });
+
+            const mapview = new MapView({
+                container: "viewDiv",
+                map: webmap
+            });
+
+            let legend = new Legend({
+                view: mapview
+            });
+            mapview.ui.add(legend, "bottom-left");
+
+            // // step 2 - display service area
+            // bufferLayer = new GraphicsLayer({
+            //     id: "bufferLayer"
+            // });
+            // webmap.layers.add(bufferLayer);
+
+            mapview.on("click", (event) => {
+                reset();
+
+                const locationGraphic = new Graphic({
+                    geometry: event.mapPoint,
+                    symbol: {
+                        type: "web-style",
+                        name: "esri-pin-1",
+                        styleName: "Esri2DPointSymbolsStyle"
+                    }
+                });
+                mapview.graphics.add(locationGraphic, 0);
+
+                // // step 1 - location service
+                // findServiceArea(locationGraphic, [5], serviceAreaUrl);
+            });
+
+            // // step 1 - location service
+            // async function findServiceArea(location, cutoff, url) {
+            //     // // step 3 - change to 5 min walk distance
+            //     // const networkDescription = await networkService.fetchServiceDescription(url);
+            //     // console.log(networkDescription);
+            //     // const walkTravelMode = networkDescription.supportedTravelModes.find(
+            //     //     (travelMode) => travelMode.name === "Walking Time"
+            //     // );
+
+            //     const taskParameters = new ServiceAreaParams({
+            //         facilities: new FeatureSet({
+            //             features: [location]
+            //         }),
+            //         defaultBreaks: cutoff,
+            //         trimOuterPolygon: true,
+            //         outSpatialReference: mapview.spatialReference,
+            //         // // step 3 - change to 5 min walk distance
+            //         // travelMode: walkTravelMode,
+            //     });
+
+            //     const serviceAreaResult = await serviceArea.solve(url, taskParameters);
+            //     console.log(serviceAreaResult);
+
+            //     // // step 2 - display service area
+            //     // serviceAreaResult.serviceAreaPolygons.features.map((serviceAreaFeature) => {
+            //     //     serviceAreaFeature.symbol = {
+            //     //         type: "simple-fill",
+            //     //         color: [0, 180, 216, 0.5],
+            //     //         outline: {
+            //     //             color: "white",
+            //     //             width: 2
+            //     //         }
+            //     //     };
+            //     //     bufferLayer.graphics.add(serviceAreaFeature);
+            //     // });
+            // }
+
+            document.getElementById("info").addEventListener("click", (event) => {
+                reset();
+            });
+
+            function reset() {
+                mapview.graphics.removeAll();
+
+                // // step 2 - display service area
+                // bufferLayer.removeAll();
+            }
+        })
+    </script>
+</head>
+
+<body>
+    <div id="sideBar">
+        <h2>San Diego Walk Guide</h2>
+        <p id="info">Click somewhere in the map to query POIs within 5-min walking distance.</p>
+    </div>
+    <div id="viewDiv"></div>
+</body>
+
+</html>

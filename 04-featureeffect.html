@@ -1,0 +1,169 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>04 - Feature effect</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.27/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.27/"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #sideBar {
+            height: 100%;
+            width: 30%;
+            float: right;
+            padding: 20px;
+            overflow: auto;
+            min-width: 240px;
+        }
+
+        #viewDiv {
+            height: 100%;
+            max-width: 70%;
+        }
+    </style>
+    <script>
+        require([
+            "esri/WebMap",
+            "esri/views/MapView",
+            "esri/widgets/Legend",
+            "esri/Graphic",
+            "esri/config",
+            "esri/rest/serviceArea",
+            "esri/rest/support/ServiceAreaParameters",
+            "esri/rest/support/FeatureSet",
+            "esri/layers/GraphicsLayer",
+            "esri/rest/networkService",
+        ], function (
+            WebMap, MapView, Legend,
+            Graphic,
+            esriConfig, serviceArea, ServiceAreaParams, FeatureSet,
+            GraphicsLayer,
+            networkService,
+        ) {
+            esriConfig.apiKey = "AAPKc364031112424dbe8892caf6a5cc86baP2O7tdWQsMzlOj0_gYA7Tn19tK3bLsfXTQyWQb-PAgTQZgI50tmuWEbvC4TwNi9Q";
+            const serviceAreaUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World";
+
+            let bufferLayer;
+
+            // // step 1 - find the places feature layer from the web map
+            // let placesLayer;
+
+            const webmap = new WebMap({
+                portalItem: {
+                    id: "aff566df19af462b9324a05fd98a1a27"
+                },
+            });
+
+            const mapview = new MapView({
+                container: "viewDiv",
+                map: webmap
+            });
+
+            let legend = new Legend({
+                view: mapview
+            });
+            mapview.ui.add(legend, "bottom-left");
+
+            // // step 1 - find the places feature layer from the web map
+            // webmap.when(() => {
+            //     console.log(webmap);
+            //     placesLayer = webmap.layers.find(layer => {
+            //         return layer.title === "San Diego Places";
+            //     });
+            // });
+
+            bufferLayer = new GraphicsLayer({
+                id: "bufferLayer"
+            });
+            webmap.layers.add(bufferLayer);
+
+            mapview.on("click", (event) => {
+                reset();
+
+                const locationGraphic = new Graphic({
+                    geometry: event.mapPoint,
+                    symbol: {
+                        type: "web-style",
+                        name: "esri-pin-1",
+                        styleName: "Esri2DPointSymbolsStyle"
+                    }
+                });
+                mapview.graphics.add(locationGraphic, 0);
+
+                findServiceArea(locationGraphic, [5], serviceAreaUrl);
+            });
+
+            async function findServiceArea(location, cutoff, url) {
+                const networkDescription = await networkService.fetchServiceDescription(url);
+                const walkTravelMode = networkDescription.supportedTravelModes.find(
+                    (travelMode) => travelMode.name === "Walking Time"
+                );
+
+                const taskParameters = new ServiceAreaParams({
+                    facilities: new FeatureSet({
+                        features: [location]
+                    }),
+                    defaultBreaks: cutoff,
+                    trimOuterPolygon: true,
+                    outSpatialReference: mapview.spatialReference,
+                    travelMode: walkTravelMode,
+                });
+
+                const { serviceAreaPolygons } = await serviceArea.solve(url, taskParameters);
+
+                serviceAreaPolygons.features.map((serviceAreaFeature) => {
+                    serviceAreaFeature.symbol = {
+                        type: "simple-fill",
+                        color: [0, 180, 216, 0.5],
+                        outline: {
+                            color: "white",
+                            width: 2
+                        }
+                    };
+                    bufferLayer.graphics.add(serviceAreaFeature);
+
+                    // // step 2 - add feature effect to filtered features
+                    // const featureFilter = {
+                    //     // need geometry instead of feature
+                    //     geometry: serviceAreaFeature.geometry,
+                    //     spatialRelationship: "intersects",
+                    // };
+                    // placesLayer.featureEffect = {
+                    //     filter: featureFilter,
+                    //     includedEffect: "bloom(1, 1pt, 0.5)",
+                    //     excludedEffect: "grayscale(80%) opacity(80%)"
+                    // };
+                });
+            }
+
+            document.getElementById("info").addEventListener("click", (event) => {
+                reset();
+            });
+
+            function reset() {
+                mapview.graphics.removeAll();
+                bufferLayer.removeAll();
+                // // step 3 - clear featureEffect when reset
+                // placesLayer.featureEffect = null;
+            }
+        })
+    </script>
+</head>
+
+<body>
+    <div id="sideBar">
+        <h2>San Diego Walk Guide</h2>
+        <p id="info">Click somewhere in the map to query POIs within 5-min walking distance.</p>
+    </div>
+    <div id="viewDiv"></div>
+</body>
+
+</html>

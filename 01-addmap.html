@@ -1,0 +1,75 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>01 - Add map</title>
+    <!--  step 1 - add modules -->
+    <!-- <link rel="stylesheet" href="https://js.arcgis.com/4.27/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.27/"></script> -->
+    <style>
+        /* step 1 - add modules */
+        /* html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #sideBar {
+            height: 100%;
+            width: 30%;
+            float: right;
+            padding: 20px;
+            overflow: auto;
+            min-width: 240px;
+            background-color: aliceblue;
+        }
+
+        #viewDiv {
+            height: 100%;
+            max-width: 70%;
+        } */
+    </style>
+    <script>
+        // // step 1 - add modules
+        // require([
+        //     "esri/WebMap",
+        //     "esri/views/MapView",
+        //     "esri/widgets/Legend"
+        // ], function (
+        //     WebMap, MapView, Legend
+        // ) {
+
+        //     // // step 2 - create web map
+        //     // const webmap = new WebMap({
+        //     //     portalItem: {
+        //     //         // portal id for the web map
+        //     //         id: ""
+        //     //     },
+        //     // });
+        //     // const mapview = new MapView({
+        //     //     container: "viewDiv",
+        //     //     map: webmap,
+        //     //     // zoom: 15
+        //     // });
+
+        //     // // step 3 - add legend
+        //     // let legend = new Legend({
+        //     //     view: mapview
+        //     // });
+        //     // mapview.ui.add(legend, "bottom-left");
+        // })
+    </script>
+</head>
+
+<body>
+    <div id="sideBar">
+        <h2>San Diego Walk Guide</h2>
+        <p id="info">Click somewhere in the map to query POIs within 5-min walking distance.</p>
+    </div>
+    <div id="viewDiv"></div>
+</body>
+
+</html>
